@@ -236,7 +236,7 @@ Expected output:
 
 ## Author
 
-**Sai Tharun Reddy Bommineni**
+**Riddhi Saraogi**
 
 B.Tech Computer Science
 Machine Learning & Data Engineering Enthusiast
