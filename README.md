@@ -239,6 +239,6 @@ Expected output:
 **Riddhi Saraogi**
 
 B.Tech Computer Science
-Machine Learning & Data Engineering Enthusiast
+Artificial Intelligence & Data Science Enthusiast
 
 ---
