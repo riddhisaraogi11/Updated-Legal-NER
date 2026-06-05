@@ -10,6 +10,33 @@ This project combines **OCR, Natural Language Processing (NLP), and rule-based p
 ---
 
 ## Features
+## Transformer model (BERT)
+
+This project now uses a BERT transformer model for Named Entity Recognition (NER) via Hugging Face's `transformers` library. The default model used in examples and tests is `dslim/bert-base-NER`, which is downloaded at runtime by `transformers`.
+
+To speed up the first run (recommended), pre-download the model once in your environment:
+
+Windows / PowerShell:
+
+```powershell
+& .\venv\Scripts\Activate.ps1
+python - <<'PY'
+from transformers import AutoTokenizer, AutoModelForTokenClassification
+AutoTokenizer.from_pretrained("dslim/bert-base-NER")
+AutoModelForTokenClassification.from_pretrained("dslim/bert-base-NER")
+print("Downloaded")
+PY
+```
+
+There is a small smoke test included (`smoke_test.py`) that demonstrates the transformer integration and prints extracted entities and regex fallbacks for DATE and MONEY. Run it like this:
+
+```powershell
+& .\venv\Scripts\Activate.ps1
+python -u smoke_test.py
+```
+
+If the model download stalls, check your internet connectivity and disk space. See `requirements.txt` for pinned dependency versions.
+
 
 * Extract entities from legal contracts
 * Handles scanned or image-based PDFs using OCR
