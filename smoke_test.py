@@ -30,10 +30,33 @@ print("=" * 60)
 print("  🔬  BERT NER — Extraction Results")
 print("=" * 60)
 
-for ent in results:
-    hf_label    = ent["entity_group"]
-    legal_label = LABEL_MAP.get(hf_label, hf_label)
-    print(f"  {legal_label:14s} | {ent['word']:35s} | {ent['score']*100:.1f}%")
+# Merge adjacent spans with the same label to produce full entities
+normalized = []
+for e in results:
+    start = e.get("start")
+    end = e.get("end")
+    label = LABEL_MAP.get(e["entity_group"], e["entity_group"])
+    score = e.get("score", 0.0)
+    normalized.append({"label": label, "start": start, "end": end, "score": score})
+
+normalized = sorted(normalized, key=lambda x: (x["start"] if x["start"] is not None else 0))
+
+merged = []
+for ent in normalized:
+    if not merged:
+        merged.append(ent)
+        continue
+    prev = merged[-1]
+    # merge if same label and spans touch or are very close (allow comma/space)
+    if ent["label"] == prev["label"] and ent["start"] is not None and prev["end"] is not None and ent["start"] <= prev["end"] + 2:
+        prev["end"] = ent["end"]
+        prev["score"] = max(prev["score"], ent["score"])
+    else:
+        merged.append(ent)
+
+for ent in merged:
+    display = TEXT[ent["start"]:ent["end"]].strip() if ent.get("start") is not None and ent.get("end") is not None else ""
+    print(f"  {ent['label']:14s} | {display:35s} | {ent['score']*100:.1f}%")
 
 # ── 4. Regex DATE / MONEY ─────────────────────────────────────────────────────
 print("\n--- Regex DATE / MONEY ---")
