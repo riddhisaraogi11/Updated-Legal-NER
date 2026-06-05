@@ -40,7 +40,7 @@ If the model download stalls, check your internet connectivity and disk space. S
 
 * Extract entities from legal contracts
 * Handles scanned or image-based PDFs using OCR
-* Custom **spaCy Named Entity Recognition (NER) model**
+* Transformer-based **BERT Named Entity Recognition (NER)** model
 * Rule-based layer to improve precision
 * REST API using **FastAPI**
 * End-to-end automated pipeline
@@ -69,10 +69,10 @@ PDF Contract
 OCR (pdf2image + Tesseract)
      │
      ▼
-spaCy Custom NER Model
+Transformer NER (Hugging Face BERT)
      │
      ▼
-Rule-based Post Processing
+Regex / Rule-based Post Processing
      │
      ▼
 Structured JSON Output
@@ -83,10 +83,11 @@ Structured JSON Output
 ## Project Structure
 
 ```
-legal_ner_project
+legal-ner-lexiscan-main
 │
-├── data_raw_pdfs
-│   └── sample.pdf
+├── data
+│   └── raw_pdfs
+│       └── sample.pdf
 │
 ├── models
 │   └── legal_ner_model
@@ -94,6 +95,8 @@ legal_ner_project
 ├── src
 │   ├── api.py
 │   ├── extract_entities.py
+│   ├── main.py
+│   ├── ner_transformer.py
 │   ├── ocr.py
 │   ├── post_processing.py
 │   ├── train_ner.py
@@ -103,8 +106,10 @@ legal_ner_project
 │   ├── test_entities.py
 │   └── test_pipeline.py
 │
+├── smoke_test.py
+├── temp_uploads
 ├── README.md
-└── .gitignore
+└── requirements.txt
 ```
 
 ---
@@ -236,6 +241,8 @@ Expected output:
 
 * Python
 * spaCy
+* transformers
+* BERT (`dslim/bert-base-NER`)
 * FastAPI
 * pdf2image
 * Tesseract OCR
