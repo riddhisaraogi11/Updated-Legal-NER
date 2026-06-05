@@ -58,10 +58,17 @@ async def extract_entities(file: UploadFile = File(...)):
     """
     Upload a PDF contract (digital or scanned).
 
-    Returns structured legal entities, each with:
-    - `text`       — extracted string
-    - `confidence` — model confidence score (0.0 – 1.0)
-    - `source`     — "transformer" (BERT) or "regex" (DATE/MONEY)
+    Returns a compact JSON payload:
+    {
+        "filename": "sample.pdf",
+        "entities": {
+            "DATE": [...],
+            "PARTY": [...],
+            "JURISDICTION": [...],
+            "MONEY": [...],
+            "PERSON": [...]
+        }
+    }
     """
     if not file.filename.lower().endswith(".pdf"):
         raise HTTPException(status_code=400, detail="Only PDF files are accepted.")
@@ -72,7 +79,7 @@ async def extract_entities(file: UploadFile = File(...)):
         shutil.copyfileobj(file.file, buffer)
 
     try:
-        entities = extract_entities_from_pdf(file_path)
+        result = extract_entities_from_pdf(file_path)
     except Exception as exc:
         raise HTTPException(status_code=500, detail=str(exc))
     finally:
@@ -80,9 +87,4 @@ async def extract_entities(file: UploadFile = File(...)):
         if os.path.exists(file_path):
             os.remove(file_path)
 
-    return {
-        "filename":   file.filename,
-        "model":      "dslim/bert-base-NER (BERT transformer)",
-        "entities":   entities,
-        "entity_count": {label: len(items) for label, items in entities.items()},
-    }
+    return result
